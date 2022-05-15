@@ -78,4 +78,36 @@ const fetchCoordsByIP = function (ip, callback) {
   });
 };
 
-module.exports = { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes };
+/**
+ * Orchestrates multiple API requests in order to determine the next 5 upcoming ISS fly overs for the user's current location.
+ * Input:
+ *   - A callback with an error or results.
+ * Returns (via Callback):
+ *   - An error, if any (nullable)
+ *   - The fly-over times as an array (null if error):
+ *     [ { risetime: <number>, duration: <number> }, ... ]
+ */
+const nextISSTimesForMyLocation = function(callback) {
+  // fetch my IP address
+  fetchMyIP((error, IP) => {
+    // get geo coordinates using IP address
+    if (error) {
+      callback(error, null);
+    }
+    fetchCoordsByIP(IP, (error, coords) => {
+      if (error) {
+        callback(error, null);
+      }
+      //console.log("BARKKK", coords);
+      // get ISS info using geo coordinates
+      fetchISSFlyOverTimes(coords, (error, flyOverTimes) => {
+        if (error) {
+          callback(error, null);
+        }
+        callback(null, flyOverTimes)
+      });
+    });
+  });
+}
+
+module.exports = { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes, nextISSTimesForMyLocation, nextISSTimesForMyLocation };
