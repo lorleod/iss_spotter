@@ -98,7 +98,6 @@ const nextISSTimesForMyLocation = function(callback) {
       if (error) {
         callback(error, null);
       }
-      //console.log("BARKKK", coords);
       // get ISS info using geo coordinates
       fetchISSFlyOverTimes(coords, (error, flyOverTimes) => {
         if (error) {
